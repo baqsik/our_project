@@ -3,6 +3,7 @@ package com.load.filter.load_filter_platform.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,11 +25,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
     @JsonIgnore
-    @Column(name = "is-signed", nullable = false)
+    @Column(name = "signed", nullable = false)
     private boolean isSigned;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Role role;
 
     @Override

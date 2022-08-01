@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -57,6 +56,7 @@ public class UserServiceImpl implements UserService {
     public LoginDto login(LoginRequest request) {
         Authentication authentication = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(authentication.getCredentials());
         return new LoginDto(jwtTokenProvider.generateToken(loadUserByUsername(request.getUsername())));
     }
 

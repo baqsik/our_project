@@ -23,7 +23,7 @@ public class BaseEntity {
     private UUID id;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
@@ -33,7 +33,7 @@ public class BaseEntity {
     private LocalDateTime updatedAt;
 
     @CreatedBy
-    @Column(name = "created_by", nullable = false, updatable = false)
+    @Column(name = "created_by", updatable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String createdBy;
 

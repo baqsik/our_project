@@ -1,9 +1,11 @@
 package com.load.filter.load_filter_platform;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.load.filter.load_filter_platform.util.SetupDBService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
 
@@ -22,5 +24,10 @@ public class LoadFilterPlatformApplication {
     @PostConstruct
     public void init() {
         setupDBService.setup();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

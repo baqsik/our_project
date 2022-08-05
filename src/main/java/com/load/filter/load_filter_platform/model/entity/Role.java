@@ -19,7 +19,7 @@ public class Role {
     private UUID id;
 
     @Column(name = "role_name", nullable = false)
-    private RoleName name;
+    private String name;
 
 
 }

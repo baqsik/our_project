@@ -2,6 +2,9 @@ package com.load.filter.load_filter_platform.controller;
 
 import com.load.filter.load_filter_platform.model.dto.LoginDto;
 import com.load.filter.load_filter_platform.model.dto.LoginRequest;
+import com.load.filter.load_filter_platform.model.dto.RegisterRequest;
+import com.load.filter.load_filter_platform.model.dto.UserDto;
+import com.load.filter.load_filter_platform.model.entity.User;
 import com.load.filter.load_filter_platform.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,11 @@ public class UserController {
 
 
     private final UserService userService;
+
+    @PostMapping("/users")
+    public ResponseEntity<UserDto> createUser(@RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.ok(userService.createUser(registerRequest));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginDto> login (@RequestBody LoginRequest loginRequest){

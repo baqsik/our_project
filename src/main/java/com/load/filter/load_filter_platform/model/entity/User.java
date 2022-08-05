@@ -3,6 +3,7 @@ package com.load.filter.load_filter_platform.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
+@ToString
 @Table(name = "users")
 public class User extends BaseEntity implements UserDetails {
 
@@ -30,7 +32,6 @@ public class User extends BaseEntity implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Role role;
 
     @Override
@@ -57,4 +58,5 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

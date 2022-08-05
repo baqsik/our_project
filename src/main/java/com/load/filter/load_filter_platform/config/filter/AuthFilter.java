@@ -38,9 +38,10 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
         String username = tokenProvider.getUsername(token);
+        var role = tokenProvider.getRole(token);
 
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, tokenProvider.getRole(token));
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, role);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class SetupDBService {
     public void setup() {
         LOGGER.info("Setup started");
         Role role = new Role();
-        role.setName(RoleName.ADMIN);
+        role.setName(RoleName.ADMIN.name());
         roleRepository.save(role);
 
 
@@ -42,10 +43,10 @@ public class SetupDBService {
 
     private void createUser(User user) {
 
-        Role role = new Role();
-        role.setName(RoleName.ADMIN);
+        List<Role> all = roleRepository.findAll();
+        Role role = all.get(0);
+        user.setRole(role);
         user.setName("Ashot");
         user.setUsername("Ashot");
-        user.setRole(role);
     }
 }

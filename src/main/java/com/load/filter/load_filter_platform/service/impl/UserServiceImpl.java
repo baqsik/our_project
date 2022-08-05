@@ -49,10 +49,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findUserByUsername(registerRequest.getUsername()).isEmpty()){
             user.setRole(roleRepository.getRoleByName(registerRequest.getRoleName().toUpperCase()));
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            user.setCreatedAt(LocalDate.now());
-            user.setUpdatedAt(LocalDate.now());
-            user.setCreatedBy("SUPER");
-            user.setUpdatedBy("SUPER");
             user.setSigned(false);
             User dbUser = userRepository.save(user);
             System.out.println(dbUser.getId());

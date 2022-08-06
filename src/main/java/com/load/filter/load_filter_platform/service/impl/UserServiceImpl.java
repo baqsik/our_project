@@ -2,17 +2,14 @@ package com.load.filter.load_filter_platform.service.impl;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.load.filter.load_filter_platform.model.dto.LoginDto;
-import com.load.filter.load_filter_platform.model.dto.LoginRequest;
-import com.load.filter.load_filter_platform.model.dto.RegisterRequest;
-import com.load.filter.load_filter_platform.model.dto.UserDto;
+import com.load.filter.load_filter_platform.model.dto.*;
 import com.load.filter.load_filter_platform.model.entity.User;
 import com.load.filter.load_filter_platform.repository.RoleRepository;
 import com.load.filter.load_filter_platform.repository.UserRepository;
 import com.load.filter.load_filter_platform.service.UserService;
 import com.load.filter.load_filter_platform.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,9 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
+
+import static java.util.Objects.nonNull;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +39,21 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public UserDto getUserById(UUID id) {
+        return objectMapper.convertValue(userRepository.findById(id).orElseThrow(EntityNotFoundException::new), UserDto.class);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 
     @Override
     @Transactional
     public UserDto createUser(RegisterRequest registerRequest) {
+//        TODO: write code if user with that username is exist
         User user = new User();
+
         if (userRepository.findUserByUsername(registerRequest.getUsername()).isEmpty()){
             user.setRole(roleRepository.getRoleByName(registerRequest.getRoleName().toUpperCase()));
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
@@ -55,20 +63,27 @@ public class UserServiceImpl implements UserService {
 
             return new UserDto(dbUser.getId(),dbUser.getName(),dbUser.getUsername());
         }
-        throw new HttpClientErrorException.BadRequest();
+        return new EntityExistsException("Username is exist");
     }
 
     @Override
     @Transactional
-    public User update(User user, UUID id) {
-        user.setId(id);
-        return userRepository.save(user);
+    public UserDto update(UpdateRequest request, UUID id) {
+//        TODO: add code if there is no user with that id
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        user.setPassword(passwordEncoder.encode(nonNull(request.getPassword()) ? request.getPassword() : user.getPassword()));
+        user.setName(passwordEncoder.encode(nonNull(request.getName()) ? request.getName() : user.getName()));
+        user.setUsername(passwordEncoder.encode(nonNull(request.getUsername()) ? request.getUsername() : user.getUsername()));
+        return objectMapper.convertValue(userRepository.save(user), UserDto.class);
     }
 
     @Override
     @Transactional
-    public void delete(UUID id) {
+    public UserDto delete(UUID id) {
+//        TODO: add code if there is no user with that id
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         userRepository.deleteById(id);
+        return objectMapper.convertValue(user, UserDto.class);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -50,26 +51,26 @@ public class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        if (nonNull(createdAt) && nonNull(updatedAt)) {
+        if (nonNull(this.createdDate) && nonNull(lastModifiedDate)) {
             return;
         }
-        LocalDate now = LocalDate.now();
-        setCreatedAt(now);
-        setUpdatedAt(now);
+        LocalDateTime now = LocalDateTime.now();
+        setCreatedDate(now);
+        setLastModifiedDate(now);
         setCreatedBy();
     }
 
     @PreUpdate
     public void preUpdate() {
-        setUpdatedAt(LocalDate.now());
+        setLastModifiedDate(LocalDateTime.now());
         setLastModifiedBy();
     }
 
     public void setCreatedBy() {
         if (nonNull(getAuthentication())) {
             UserDetailsImpl userDetails = (UserDetailsImpl) getAuthentication().getPrincipal();
-            setCreatedBy(userDetails.getName());
-            setLastModifiedBy(userDetails.getName());
+            setCreatedBy(userDetails.getId());
+            setLastModifiedBy(userDetails.getId());
         }
     }
 

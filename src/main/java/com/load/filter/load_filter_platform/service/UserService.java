@@ -1,26 +1,26 @@
 package com.load.filter.load_filter_platform.service;
 
-import com.load.filter.load_filter_platform.model.dto.LoginDto;
-import com.load.filter.load_filter_platform.model.dto.LoginRequest;
-import com.load.filter.load_filter_platform.model.dto.RegisterRequest;
-import com.load.filter.load_filter_platform.model.dto.UserDto;
+import com.load.filter.load_filter_platform.model.dto.*;
 import com.load.filter.load_filter_platform.model.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface UserService extends UserDetailsService {
-    User getUserById(UUID id);
+    UserDto getUserById(UUID id);
+
+    List<User> getAll();
 
     @Transactional
     UserDto createUser(RegisterRequest user);
 
     @Transactional
-    User update(User user, UUID id);
+    UserDto update(UpdateRequest user, UUID id);
 
     @Transactional
-    void delete(UUID id);
+    UserDto delete(UUID id);
 
     LoginDto login(LoginRequest request);
 }

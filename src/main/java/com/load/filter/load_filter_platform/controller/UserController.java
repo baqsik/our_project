@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +29,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, UpdateRequest updateRequest) {
-        return ResponseEntity.ok(userService.update(updateRequest, id));
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, UpdateRequest updateRequest) {
+            var res = userService.update(updateRequest, id);
+            return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/users/{id}")

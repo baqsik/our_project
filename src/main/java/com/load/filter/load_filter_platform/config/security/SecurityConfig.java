@@ -15,6 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 
 @Configuration
@@ -24,9 +27,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthFilter authFilter;
     private final UserService userService;
 
-    public SecurityConfig(AuthFilter authFilter, @Lazy UserService userService) {
+    private final CorsProcessor corsProcessor;
+
+    public SecurityConfig(AuthFilter authFilter, @Lazy UserService userService, CorsProcessor corsProcessor) {
         this.authFilter = authFilter;
         this.userService = userService;
+        this.corsProcessor = corsProcessor;
     }
 
     @Override
@@ -61,5 +67,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        String domain = "http://192.168.1.188:5555";
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addAllowedOrigin(domain);
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        CorsFilter corsFilter = new CorsFilter(source);
+        corsFilter.setCorsProcessor(corsProcessor);
+        return corsFilter;
     }
 }

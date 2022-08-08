@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto createUser(RegisterRequest registerRequest) {
+    public UserDto createUser(RegisterRequest registerRequest) throws EntityExistsException{
 //        TODO: write code if user with that username is exist
         User user = new User();
 
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
             return new UserDto(dbUser.getId(),dbUser.getName(),dbUser.getUsername());
         }
-        return new EntityExistsException("Username is exist");
+        throw  new EntityExistsException("Username is exist");
     }
 
     @Override

@@ -41,44 +41,44 @@ public class BaseEntity {
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String createdBy;
+    private UUID createdBy;
 
     @LastModifiedBy
     @Column(name = "updated_by")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String updatedBy;
+    private UUID updatedBy;
 
-//    @PrePersist
-//    public void prePersist() {
-//        if (nonNull(this.createdDate) && nonNull(lastModifiedDate)) {
-//            return;
-//        }
-//        LocalDate now = LocalDate.now();
-//        setCreatedDate(now);
-//        setLastModifiedDate(now);
-//        setCreatedBy();
-//    }
-//
-//    @PreUpdate
-//    public void preUpdate() {
-//        setLastModifiedDate(LocalDate.now());
-//        setLastModifiedBy();
-//    }
-//
-//    public void setCreatedBy() {
-//        if (nonNull(getAuthentication())) {
-//            UserDetailsImpl userDetails = (UserDetailsImpl) getAuthentication().getPrincipal();
-//            setCreatedBy(userDetails.getId());
-//            setLastModifiedBy(userDetails.getId());
-//        }
-//    }
-//
-//    public void setLastModifiedBy() {
-//        if (nonNull(getAuthentication())) {
-//            UserDetailsImpl userDetails = (UserDetailsImpl) getAuthentication().getPrincipal();
-//            setLastModifiedBy(userDetails.getId());
-//        }
-//    }
+    @PrePersist
+    public void prePersist() {
+        if (nonNull(this.createdAt) && nonNull(updatedAt)) {
+            return;
+        }
+        LocalDate now = LocalDate.now();
+        setCreatedAt(now);
+        setUpdatedAt(now);
+        setCreatedBy();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        setUpdatedAt(LocalDate.now());
+        setLastModifiedBy();
+    }
+
+    public void setCreatedBy() {
+        if (nonNull(getAuthentication())) {
+            User userDetails = (User) getAuthentication().getPrincipal();
+            setCreatedBy(userDetails.getId());
+            setUpdatedBy(userDetails.getId());
+        }
+    }
+
+    public void setLastModifiedBy() {
+        if (nonNull(getAuthentication())) {
+            User userDetails = (User) getAuthentication().getPrincipal();
+            setUpdatedBy(userDetails.getId());
+        }
+    }
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();

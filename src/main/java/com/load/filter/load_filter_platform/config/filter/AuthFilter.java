@@ -1,6 +1,7 @@
 package com.load.filter.load_filter_platform.config.filter;
 
-import com.load.filter.load_filter_platform.service.UserService;
+import com.load.filter.load_filter_platform.model.entity.User;
+import com.load.filter.load_filter_platform.repository.UserRepository;
 import com.load.filter.load_filter_platform.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +21,8 @@ public class AuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
 
+    private final UserRepository userRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -37,11 +40,9 @@ public class AuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String username = tokenProvider.getUsername(token);
-        var role = tokenProvider.getRole(token);
+        User userDetails = userRepository.findUserByUsername(tokenProvider.getUsername(token)).orElseThrow();
 
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, role);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }
